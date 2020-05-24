@@ -2,6 +2,8 @@
 
 A quick POC/effort on transpiling some Janet code to valid Javascript.
 
+Find out more about Janet at https://janet-lang.org
+
 *ALPHA QUALITY* (if that)
 
 # Notable TODO
