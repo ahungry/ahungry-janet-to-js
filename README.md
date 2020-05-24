@@ -7,8 +7,12 @@ A quick POC/effort on transpiling some Janet code to valid Javascript.
 # Notable TODO
 
 - Support shorthand for struct/table/tuple/array syntax
-- Add explicit interop for Javascript (node/browser)
 - Flush out support for the Janet stdlib/BIF
+
+# Caveats/Difference to standard Janet
+
+- Janet OOP construct is slightly different (shorthand for invoking
+  methods on a table/struct will *not* pass in the self/object)
 
 # What works so far
 
