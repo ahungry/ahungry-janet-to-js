@@ -218,10 +218,10 @@
   # (->> (slurp s)
   #      (map (fn [byte] (parser/byte parser byte))))
   (parser/consume parser (slurp s))
-  (make-js (parser/produce parser))
-  )
+  (while (parser/has-more parser)
+    (make-js (parser/produce parser))))
 
-#(parse-file "examples/ex1.janet")
+#(parse-file "examples/manyforms.janet")
 
 (defn help [this]
   (printf
