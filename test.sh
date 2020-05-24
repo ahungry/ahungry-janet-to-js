@@ -21,6 +21,8 @@ World
 100
 13
 dog
+beep beep! I am gray!
+Car says: hello!
 EOF
 )
 
