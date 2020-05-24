@@ -57,6 +57,7 @@
          (= '- x) :minus
          (= '/ x) :slash
          (= '* x) :start
+         (= '= x) :equal
          (= '< x) :lessthan
          (= '<= x) :lessthanequal
          (= '> x) :greaterthan
@@ -123,10 +124,14 @@
 (defn make-if-false [args]
   (get args 2))
 
-(defn if->js [f args] (string/format "(%s) ? ( %s ) : ( %s )"
+# Use an IIFE ternary to avoid early evaluation of either side
+(defn if->js [f args] (string/format "(%s) ? (() => { %s })() : (() => { %s })()"
                                      (make-if-predicate args)
                                      (make-if-true args)
                                      (make-if-false args)))
+
+(defn ret->js [f args]
+  (string/format "return %s" (string/join args)))
 
 (defn make-js-expression [f args]
   (cond
@@ -134,6 +139,7 @@
     (= 'fn f) (fn->js f args)
     (= 'do f) (do->js f args)
     (= 'if f) (if->js f args)
+    (= 'ret f) (ret->js f args)
     :else (string/format "%s(%s)" (symbol-replacements f) (string/join args ","))))
 
 (defn ast->js [ast]
@@ -184,6 +190,9 @@
                               (if (< n 3)
                                 (recursive (+ 1 n))
                                 n))
+                            (pp (if (= 1 1)
+                                  (do (pp "Hello") (pp "World") (ret 100))
+                                  (do (pp "Goodbye") (pp "World") (ret 200))))
                             (pp (recursive 0))
                             (pp (sum)))))
       #(ast->js (walk-form '(do (def x 3) (pp (+ x 2)))))
