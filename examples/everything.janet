@@ -19,3 +19,6 @@
         (do (pp "Hello") (pp "World") (identity 100))
         (do (pp "Goodbye") (pp "World") (identity 200))))
   (pp (sum)))
+
+# Sample JS interop
+(pp (-> (:from Buffer "dog") :toString))

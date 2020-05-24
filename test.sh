@@ -20,6 +20,7 @@ Hello
 World
 100
 13
+dog
 EOF
 )
 

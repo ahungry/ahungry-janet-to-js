@@ -38,6 +38,9 @@ A quick POC/effort on transpiling some Janet code to valid Javascript.
         (do (pp "Hello") (pp "World") (identity 100))
         (do (pp "Goodbye") (pp "World") (identity 200))))
   (pp (sum)))
+
+# Sample JS interopt
+(pp (-> (:from Buffer "dog") :toString))
 ```
 
 Provides output as expected:
@@ -52,6 +55,7 @@ Hello
 World
 100
 13
+dog
 ```
 
 # License
