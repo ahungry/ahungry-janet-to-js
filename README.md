@@ -4,6 +4,11 @@ A quick POC/effort on transpiling some Janet code to valid Javascript.
 
 *ALPHA QUALITY* (if that)
 
+# Notable TODO
+
+- Support shorthand for struct/table/tuple/array syntax
+- Add explicit interop for Javascript (node/browser)
+
 # What works so far
 
 ```clojure
