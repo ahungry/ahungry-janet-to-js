@@ -1,5 +1,6 @@
 var identity = x => x
 var pp = console.log
+var print = (...args) => pp(args.join(''))
 var nil = () => []
 var plus = (...args) => args.reduce((a, b) => a + b, 0)
 var minus = (...args) => args.reduce((a, b) => a - b, 0)

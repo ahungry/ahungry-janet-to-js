@@ -1,1 +1,1 @@
-(pp (:from Buffer "dog"))
+(pp (-> (:from Buffer "dog") :toString))

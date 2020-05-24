@@ -168,7 +168,7 @@
 
     (number? ast) (string ast)
 
-    (keyword? ast) (string/format "':%s'" (string ast))
+    (keyword? ast) (string/format "'%s'" (string ast))
 
     :else (string/format "%s" (string ast))))
 

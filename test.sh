@@ -5,15 +5,15 @@ echo
 
 test() {
     echo "Ensuring: $3"
-    [[ "$1" == "$2" ]] || echo -e "Received: \n $1 \nExpected:\n$2"
+    [[ "$1" == "$2" ]] || echo -e "Received: \n$1 \nExpected:\n$2"
 }
 
 ./janetscript.janet generate examples/everything.janet > js-out/everything.js
 everything=$(node ./js-out/everything.js)
 everything_expected=$(cat <<EOF
 [ 2, 3, 4 ]
-[ ':a', ':b' ]
-{ ':a': 1, ':b': 2 }
+[ 'a', 'b' ]
+{ a: 1, b: 2 }
 1
 3
 Hello
@@ -45,7 +45,16 @@ test "$ex1" "$ex1_ex" "multiple forms can be parsed from one file"
 ./janetscript.janet generate examples/jsmethod.janet > js-out/jsmethod.js
 ex1=$(node ./js-out/jsmethod.js)
 ex1_ex=$(cat <<EOF
-<Buffer 64 6f 67>
+dog
 EOF
 )
 test "$ex1" "$ex1_ex" "js-like interop on methods works"
+
+./janetscript.janet generate examples/redcar.janet > js-out/redcar.js
+ex1=$(node ./js-out/redcar.js)
+ex1_ex=$(cat <<EOF
+beep beep! I am gray!
+Car says: hello!
+EOF
+)
+test "$ex1" "$ex1_ex" "the janet redcar oop example works"
