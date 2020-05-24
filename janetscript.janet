@@ -57,6 +57,10 @@
          (= '- x) :minus
          (= '/ x) :slash
          (= '* x) :start
+         (= '< x) :lessthan
+         (= '<= x) :lessthanequal
+         (= '> x) :greaterthan
+         (= '>= x) :greaterthanequal
          :else x)
    string))
 
@@ -110,11 +114,26 @@
 (defn do->js [f args] (string/format "do {\n%s\n} while (false)"
                                      (string/join args "\n")))
 
+(defn make-if-predicate [args]
+  (first args))
+
+(defn make-if-true [args]
+  (get args 1))
+
+(defn make-if-false [args]
+  (get args 2))
+
+(defn if->js [f args] (string/format "(%s) ? ( %s ) : ( %s )"
+                                     (make-if-predicate args)
+                                     (make-if-true args)
+                                     (make-if-false args)))
+
 (defn make-js-expression [f args]
   (cond
     (= 'def f) (def->js f args)
     (= 'fn f) (fn->js f args)
     (= 'do f) (do->js f args)
+    (= 'if f) (if->js f args)
     :else (string/format "%s(%s)" (symbol-replacements f) (string/join args ","))))
 
 (defn ast->js [ast]
@@ -154,6 +173,11 @@
                               (def y 10)
                               (+ x y))
                             (pp (map (fn [n] (+ 1 n)) (tuple 1 2 3)))
+                            (defn recursive [n]
+                              (if (< n 3)
+                                (recursive (+ 1 n))
+                                n))
+                            (pp (recursive 0))
                             (pp (sum)))))
       #(ast->js (walk-form '(do (def x 3) (pp (+ x 2)))))
       #(ast->js (walk-form '(do (defn three [] (+ 1 2)) (pp (three)))))
