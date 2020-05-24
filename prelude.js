@@ -1,3 +1,4 @@
+const identity = x => x
 const pp = console.log
 const nil = () => []
 const plus = (...args) => args.reduce((a, b) => a + b, 0)
@@ -21,4 +22,4 @@ const struct = (...args) => {
   }
   return Object.freeze(m)
 }
-const get = (m, k) => m[k]
+const get = (m, k) => m[k];

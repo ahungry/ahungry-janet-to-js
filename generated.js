@@ -1,3 +1,4 @@
+const identity = x => x
 const pp = console.log
 const nil = () => []
 const plus = (...args) => args.reduce((a, b) => a + b, 0)
@@ -21,25 +22,16 @@ const struct = (...args) => {
   }
   return Object.freeze(m)
 }
-const get = (m, k) => m[k]
-do {
-const x = 3;
+const get = (m, k) => m[k];
+(() => { const x = 3;
 const y = 4;
 const sum = (nil,) => { const y = 10;; return plus(x,y) };
 pp(map((n,) => { ; return plus(1,n) },tuple(1,2,3)))
 pp(keys(struct(':a',1,':b',2)))
 pp(struct(':a',1,':b',2))
 pp(get(struct(':x',1,':y',2),':x'))
-const recursive = (n,) => { ; return (lessthan(n,3)) ? (() => { recursive(plus(1,n)) })() : (() => { n })() };
-pp((equal(1,1)) ? (() => { do {
-pp('Hello')
-pp('World')
-return 100
-} while (false) })() : (() => { do {
-pp('Goodbye')
-pp('World')
-return 200
-} while (false) })())
+const recursive = (n,) => { ; return (lessthan(n,3)) ? (() => { ; return recursive(plus(1,n))})() : (() => { ; return n})() };
 pp(recursive(0))
-pp(sum())
-} while (false)
+pp((equal(1,1)) ? (() => { ; return (() => { pp('Hello')
+pp('World'); return identity(100)})()})() : (() => { ; return (() => { pp('Goodbye')
+pp('World'); return identity(200)})()})()); return pp(sum())})()

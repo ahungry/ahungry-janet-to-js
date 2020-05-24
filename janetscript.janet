@@ -31,6 +31,9 @@
 #(parse-file "js.janet")
 
 (defn rest [xs] (if (= 0 (length xs)) [] (array/slice xs 1)))
+(defn butlast [xs]
+  (let [len (length xs)]
+    (array/slice xs 0 (- len 1))))
 
 (defn try-type [x]
   (try
@@ -112,8 +115,10 @@
                                      (make-fn-params args)
                                      (make-fn-body args)))
 
-(defn do->js [f args] (string/format "do {\n%s\n} while (false)"
-                                     (string/join args "\n")))
+(defn do->js [f args]
+  (string/format "(() => { %s; return %s})()"
+                 (string/join (butlast args) "\n")
+                 (string (last args))))
 
 (defn make-if-predicate [args]
   (first args))
@@ -125,10 +130,12 @@
   (get args 2))
 
 # Use an IIFE ternary to avoid early evaluation of either side
-(defn if->js [f args] (string/format "(%s) ? (() => { %s })() : (() => { %s })()"
-                                     (make-if-predicate args)
-                                     (make-if-true args)
-                                     (make-if-false args)))
+(defn if->js [f args]
+  (string/format #"(%s) ? (() => { %s })() : (() => { %s })()"
+   "(%s) ? %s : %s"
+   (make-if-predicate args)
+   (do->js :skip [(get args 1)])
+   (do->js :skip [(get args 2)])))
 
 (defn ret->js [f args]
   (string/format "return %s" (string/join args)))
@@ -190,10 +197,10 @@
                               (if (< n 3)
                                 (recursive (+ 1 n))
                                 n))
-                            (pp (if (= 1 1)
-                                  (do (pp "Hello") (pp "World") (ret 100))
-                                  (do (pp "Goodbye") (pp "World") (ret 200))))
                             (pp (recursive 0))
+                            (pp (if (= 1 1)
+                                  (do (pp "Hello") (pp "World") (identity 100))
+                                  (do (pp "Goodbye") (pp "World") (identity 200))))
                             (pp (sum)))))
       #(ast->js (walk-form '(do (def x 3) (pp (+ x 2)))))
       #(ast->js (walk-form '(do (defn three [] (+ 1 2)) (pp (three)))))
