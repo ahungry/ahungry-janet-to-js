@@ -41,3 +41,11 @@ Goodbye
 EOF
 )
 test "$ex1" "$ex1_ex" "multiple forms can be parsed from one file"
+
+./janetscript.janet generate examples/jsmethod.janet > js-out/jsmethod.js
+ex1=$(node ./js-out/jsmethod.js)
+ex1_ex=$(cat <<EOF
+<Buffer 64 6f 67>
+EOF
+)
+test "$ex1" "$ex1_ex" "js-like interop on methods works"

@@ -133,6 +133,20 @@
 (defn ret->js [f args]
   (string/format "return %s" (string/join args)))
 
+(defn make-method [f args]
+  (string/format "%s.%s(%s)"
+                 (first args)
+                 (symbol-replacements f)
+                 (string/join (butfirst args) ",")))
+
+(defn make-call [f args]
+  (string/format "%s(%s)" (symbol-replacements f) (string/join args ",")))
+
+(defn make-call-or-method [f args]
+  (if (keyword? f)
+    (make-method f args)
+    (make-call f args)))
+
 (defn make-js-expression [f args]
   (cond
     (= 'def f) (def->js f args)
@@ -140,7 +154,9 @@
     (= 'do f) (do->js f args)
     (= 'if f) (if->js f args)
     (= 'ret f) (ret->js f args)
-    :else (string/format "%s(%s)" (symbol-replacements f) (string/join args ","))))
+    #:else (string/format "%s(%s)" (symbol-replacements f) (string/join args ","))
+    :else (make-call-or-method f args)
+    ))
 
 (defn ast->js [ast]
   (cond
