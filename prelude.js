@@ -10,3 +10,14 @@ const lessthan = (a, b) => a < b
 const lessthanequal = (a, b) => a <= b
 const greaterthan = (a, b) => a > b
 const greaterthanequal = (a, b) => a >= b
+const keys = (m) => Object.keys(m)
+const struct = (...args) => {
+  const m = {}
+  for (let i = 0; i < args.length; i += 2) {
+    const k = args[i]
+    const v = args[i + 1]
+    m[k] = v
+  }
+  return Object.freeze(m)
+}
+const get = (m, k) => m[k]

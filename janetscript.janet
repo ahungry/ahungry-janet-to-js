@@ -146,6 +146,8 @@
 
     (number? ast) (string ast)
 
+    (keyword? ast) (string/format "':%s'" (string ast))
+
     :else (string/format "%s" (string ast))))
 
 #(ast->js (walk-form '(fn [a b c] "Hello")))
@@ -173,6 +175,11 @@
                               (def y 10)
                               (+ x y))
                             (pp (map (fn [n] (+ 1 n)) (tuple 1 2 3)))
+                            (pp (keys (struct :a 1
+                                              :b 2
+                                              )))
+                            (pp (struct :a 1 :b 2))
+                            (pp (-> (struct :x 1 :y 2) (get :x)))
                             (defn recursive [n]
                               (if (< n 3)
                                 (recursive (+ 1 n))
