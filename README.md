@@ -8,6 +8,7 @@ A quick POC/effort on transpiling some Janet code to valid Javascript.
 
 - Support shorthand for struct/table/tuple/array syntax
 - Add explicit interop for Javascript (node/browser)
+- Flush out support for the Janet stdlib/BIF
 
 # What works so far
 
