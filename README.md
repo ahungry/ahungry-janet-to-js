@@ -30,6 +30,9 @@ A quick POC/effort on transpiling some Janet code to valid Javascript.
       (recursive (+ 1 n))
       n))
   (pp (recursive 0))
+  (pp (if (= 1 1)
+        (do (pp "Hello") (pp "World") (identity 100))
+        (do (pp "Goodbye") (pp "World") (identity 200))))
   (pp (sum)))
 ```
 
@@ -41,6 +44,9 @@ Provides output as expected:
 { ':a': 1, ':b': 2 }
 1
 3
+Hello
+World
+100
 13
 ```
 
