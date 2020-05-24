@@ -1,3 +1,5 @@
+#!/usr/bin/env janet
+
 (defmacro my-pp [& xs]
   ~(do
      (pp "in my special macro")
@@ -20,17 +22,8 @@
 
 #(peg/match peg-form "(outer (middle (inner 1 2 3) (inner-2 4 5 6)))")
 
-(defn parse-file [s]
-  (def parser (parser/new))
-  # (->> (slurp s)
-  #      (map (fn [byte] (parser/byte parser byte))))
-  (parser/consume parser (slurp s))
-  (pp (parser/produce parser))
-  )
-
-#(parse-file "js.janet")
-
 (defn rest [xs] (if (= 0 (length xs)) [] (array/slice xs 1)))
+(defn butfirst [xs] (array/slice xs 1))
 (defn butlast [xs]
   (let [len (length xs)]
     (array/slice xs 0 (- len 1))))
@@ -174,7 +167,7 @@
 
 #(ast->js (walk-form '(do (def x 3) (def y 4) (defn sum [] (+ x y)) (pp 5 (sum)))))
 
-(defn make-js []
+(defn make-js-old []
   (def prelude (slurp "prelude.js"))
   (def generated
     (string
@@ -208,4 +201,68 @@
   (pp generated)
   (spit "generated.js" generated))
 
-(make-js)
+#(make-js-old)
+
+(defn make-js [form]
+  (def generated
+    (string
+     (->>
+      (ast->js (walk-form form))
+      )))
+  (printf "%s" generated)
+  #(spit "generated.js" generated)
+  )
+
+(defn parse-file [s]
+  (def parser (parser/new))
+  # (->> (slurp s)
+  #      (map (fn [byte] (parser/byte parser byte))))
+  (parser/consume parser (slurp s))
+  (make-js (parser/produce parser))
+  )
+
+#(parse-file "examples/ex1.janet")
+
+(defn help [this]
+  (printf
+   ```
+Run with:
+
+  %s <cmd> <file1> <file2>...
+
+Where <cmd> is one of:
+
+  help                 - print this message
+  generate             - generate Javascript from Janet source
+  generate-no-prelude  - generate Javascrpit from Janet source (skip prelude)
+
+and <file1> <file2> is a list of one or more files for transpilation.
+
+The prelude is a set of functions - only use no-prelude if you are including it
+via an external include of prelude.js.
+
+Copyright 2020 Matthew Carter <m@ahungry.com>
+   ``` this))
+
+(defn gen [args ]
+  (def out-buf (buffer/new 1))
+  (with-dyns
+    [:out out-buf]
+    (print (slurp "prelude.js"))
+    (map parse-file (butfirst args)))
+  (print (string out-buf)))
+
+(defn gen-no-prelude [args ]
+  (def out-buf (buffer/new 1))
+  (with-dyns
+    [:out out-buf]
+    (map parse-file (butfirst args)))
+  (print (string out-buf)))
+
+(defn main [& args]
+  (if (= (length args) 1)
+    (help (first args))
+    (cond
+      (= "generate" (get args 1)) (gen (butfirst args))
+      (= "generate-no-prelude" (get args 1)) (gen-no-prelude (butfirst args))
+      :else (help (first args)))))
