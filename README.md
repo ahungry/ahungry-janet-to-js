@@ -65,6 +65,11 @@ https://github.com/staab/janet-js
 
 # Pass more arguments
 (:say Car "hello!") # prints "Car says: hello!"
+
+(pp @{:a 1 :b 2})
+(pp {:x 1 :y 2})
+(pp @[1 2 3])
+(pp [4 5 6])
 ```
 
 Provides output as expected:
@@ -82,6 +87,10 @@ World
 dog
 beep beep! I am gray!
 Car says: hello!
+{ a: 1, b: 2 }
+{ x: 1, y: 2 }
+[ 1, 2, 3 ]
+[ 4, 5, 6 ]
 ```
 
 # License

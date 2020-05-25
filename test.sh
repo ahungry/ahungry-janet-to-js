@@ -23,6 +23,10 @@ World
 dog
 beep beep! I am gray!
 Car says: hello!
+{ a: 1, b: 2 }
+{ x: 1, y: 2 }
+[ 1, 2, 3 ]
+[ 4, 5, 6 ]
 EOF
 )
 

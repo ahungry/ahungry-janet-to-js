@@ -28,9 +28,14 @@
   (struct :type "Car"
           :color "gray"
           :say (fn [msg] (print "Car says: " msg))
-          :honk (fn [] (print "beep beep! I am " (get Car :color) "!"))))
+          :honk (fn [self] (print "beep beep! I am " (get self :color) "!"))))
 
-(:honk Car) # prints "beep beep! I am gray!"
+(:honk Car Car) # prints "beep beep! I am gray!"
 
 # Pass more arguments
 (:say Car "hello!") # prints "Car says: hello!"
+
+(pp @{:a 1 :b 2})
+(pp {:x 1 :y 2})
+(pp @[1 2 3])
+(pp [4 5 6])
