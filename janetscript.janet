@@ -81,7 +81,7 @@
   (walk-form '(defn foo [] (pp 5))))
 
 (defn symbol-replacements [x]
-  (->
+  (->>
    (cond (= '+ x) :plus
          (= '- x) :minus
          (= '/ x) :slash
@@ -92,7 +92,8 @@
          (= '> x) :greaterthan
          (= '>= x) :greaterthanequal
          :else x)
-   string))
+   string
+   (string/replace-all "/" "_")))
 
 (defn call-replacements [x]
   (cond (number? x) (string x)

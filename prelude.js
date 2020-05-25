@@ -27,4 +27,7 @@ var table = (...args) => {
 var struct = (...args) => {
   return Object.freeze(table.apply(null, args))
 }
+// Objects just fail silently when this is done, whereas push throws usually.
+var array_push = (xs, x) => Object.isFrozen(x) ? x : xs.push(x)
+var put = (m, k, v) => Object.isFrozen(m) ? m : m[k] = v
 var get = (m, k) => m[k];

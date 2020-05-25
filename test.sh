@@ -76,3 +76,12 @@ ex1_ex=$(cat <<EOF
 EOF
 )
 test "$ex1" "$ex1_ex" "shorthand syntax for struct is good"
+
+./janetscript.janet generate examples/immutability.janet > js-out/immutability.js
+ex1=$(node ./js-out/immutability.js)
+ex1_ex=$(cat <<EOF
+{ a: 1, b: 2 }
+{ a: 1, b: 2, c: 3 }
+EOF
+)
+test "$ex1" "$ex1_ex" "immutability works"
