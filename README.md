@@ -18,7 +18,6 @@ https://github.com/staab/janet-js
 
 # Notable TODO
 
-- Support shorthand for struct/table/tuple/array syntax
 - Flush out support for the Janet stdlib/BIF
 
 # Caveats/Difference to standard Janet
