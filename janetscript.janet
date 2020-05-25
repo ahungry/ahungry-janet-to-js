@@ -229,15 +229,29 @@
   #(spit "generated.js" generated)
   )
 
+(defn get-file-content [s]
+  (->> (slurp s)
+       # Ensure shorthand for struct is good
+       # TODO: We also will need similar for destruct I guess, if its
+       # in a let binding (let will be done later, seems tricky)
+       (string/replace-all "@{" "(table ")
+       (string/replace-all "{" "(struct ")
+       (string/replace-all "}" ")")
+       # Ensure we do similar for shorthand
+       (string/replace-all "@[" "(array ")
+       (string/replace-all "[" "(tuple ")
+       (string/replace-all "]" ")")
+       ))
+
 (defn parse-file [s]
   (def parser (parser/new))
   # (->> (slurp s)
   #      (map (fn [byte] (parser/byte parser byte))))
-  (parser/consume parser (slurp s))
+  (parser/consume parser (get-file-content s))
   (while (parser/has-more parser)
     (make-js (parser/produce parser))))
 
-#(parse-file "examples/manyforms.janet")
+#(parse-file "examples/syntaxstruct.janet")
 
 (defn help [this]
   (printf

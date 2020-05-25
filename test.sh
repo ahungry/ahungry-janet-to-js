@@ -61,3 +61,14 @@ Car says: hello!
 EOF
 )
 test "$ex1" "$ex1_ex" "the janet redcar oop example works"
+
+./janetscript.janet generate examples/syntaxstruct.janet > js-out/syntaxstruct.js
+ex1=$(node ./js-out/syntaxstruct.js)
+ex1_ex=$(cat <<EOF
+{ a: 1, b: 2 }
+{ x: 1, y: 2 }
+[ 1, 2, 3 ]
+[ 4, 5, 6 ]
+EOF
+)
+test "$ex1" "$ex1_ex" "shorthand syntax for struct is good"
