@@ -1,4 +1,4 @@
-# Janetscript
+# Ahungry's Janet to JS Transpiler
 
 A quick POC/effort on transpiling some Janet code to valid Javascript.
 
