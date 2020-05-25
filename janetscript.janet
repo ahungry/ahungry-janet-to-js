@@ -59,9 +59,10 @@
 (defn handle-atom [x] x)
 
 (defn walk-form [y]
-  (def x (macex y))
+  # Some forms like try are too tricky to macro expand
+  (def x (if (= 'try (first y)) y (macex y)))
   (cond (tuple? x)
-        (let [[f] x]
+        (let [[f] x [fy] y]
           (if (= :parens (tuple/type x))
             (handle-fn f (map walk-form (rest x)))
             (handle-fn 'tuple (map walk-form x))))
@@ -220,42 +221,8 @@
 
 #(ast->js (walk-form '(do (def x 3) (def y 4) (defn sum [] (+ x y)) (pp 5 (sum)))))
 #(ast->js (walk-form '(do {:a 1 :b 2})))
-
-(defn make-js-old []
-  (def prelude (slurp "prelude.js"))
-  (def generated
-    (string
-     prelude
-     (->>
-      #(ast->js (walk-form '(defn ping [] (pp "pong"))))
-      (ast->js (walk-form '(do
-                            (def x 3)
-                            (def y 4)
-                            (defn sum []
-                              (def y 10)
-                              (+ x y))
-                            (pp (map (fn [n] (+ 1 n)) (tuple 1 2 3)))
-                            (pp (keys (struct :a 1
-                                              :b 2
-                                              )))
-                            (pp (struct :a 1 :b 2))
-                            (pp (-> (struct :x 1 :y 2) (get :x)))
-                            (defn recursive [n]
-                              (if (< n 3)
-                                (recursive (+ 1 n))
-                                n))
-                            (pp (recursive 0))
-                            (pp (if (= 1 1)
-                                  (do (pp "Hello") (pp "World") (identity 100))
-                                  (do (pp "Goodbye") (pp "World") (identity 200))))
-                            (pp (sum)))))
-      #(ast->js (walk-form '(do (def x 3) (pp (+ x 2)))))
-      #(ast->js (walk-form '(do (defn three [] (+ 1 2)) (pp (three)))))
-      )))
-  (pp generated)
-  (spit "generated.js" generated))
-
-#(make-js-old)
+#(ast->js (walk-form '(try (pp "ha") ((error err) (print err)))))
+#(ast->js (walk-form '(map |(pp $0) [1 2 3])))
 
 (defn make-js [form]
   (def generated
@@ -269,16 +236,6 @@
 
 (defn get-file-content [s]
   (->> (slurp s)
-       # Ensure shorthand for struct is good
-       # TODO: We also will need similar for destruct I guess, if its
-       # in a let binding (let will be done later, seems tricky)
-       # (string/replace-all "@{" "(table ")
-       # (string/replace-all "{" "(struct ")
-       # (string/replace-all "}" ")")
-       # # Ensure we do similar for shorthand
-       # (string/replace-all "@[" "(array ")
-       # (string/replace-all "[" "(tuple ")
-       # (string/replace-all "]" ")")
        ))
 
 (defn parse-file [s]

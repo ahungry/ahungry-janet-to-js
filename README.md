@@ -19,6 +19,8 @@ https://github.com/staab/janet-js
 # Notable TODO
 
 - Flush out support for the Janet stdlib/BIF
+- try/catch construct
+- destructuring
 
 # Caveats/Difference to standard Janet
 
