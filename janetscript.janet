@@ -86,6 +86,8 @@
                 (get args 1)))
   (->> params
        (string/replace-all "(" ",")
+       # FIXME: Incredibly hackish - related to [] -> (tuple)
+       (string/replace-all "tuple," "")
        (string/replace-all ")" "")))
 
 (defn make-fn-body [inargs]
