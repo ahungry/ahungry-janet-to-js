@@ -22,6 +22,26 @@
 
 #(peg/match peg-form "(outer (middle (inner 1 2 3) (inner-2 4 5 6)))")
 
+(defn zipmap [ks vs]
+  (if (or (= nil ks)
+          (= nil vs))
+    {}
+    (do
+      (def res @{})
+      (map (fn [k v]
+             (put res k v)) ks vs)
+      res)))
+(defn zipvec [ks vs]
+  (if (or (= nil ks)
+          (= nil vs))
+    []
+    (do
+      (def res @[])
+      (map (fn [k v]
+             (array/push res k)
+             (array/push res v)
+             ) ks vs)
+      res)))
 (defn rest [xs] (if (= 0 (length xs)) [] (array/slice xs 1)))
 (defn butfirst [xs] (array/slice xs 1))
 (defn butlast [xs]
@@ -40,8 +60,21 @@
 
 (defn walk-form [y]
   (def x (macex y))
-  (cond (tuple? x) (let [[f] x]
-                     (handle-fn f (map walk-form (rest x))))
+  (cond (tuple? x)
+        (let [[f] x]
+          (if (= :parens (tuple/type x))
+            (handle-fn f (map walk-form (rest x)))
+            (handle-fn 'tuple (map walk-form x))))
+
+        (array? x)
+        (handle-fn 'array (map walk-form x))
+
+        (struct? x)
+        (handle-fn 'struct (map walk-form (zipvec (keys x) (values x))))
+
+        (table? x)
+        (handle-fn 'table (map walk-form (zipvec (keys x) (values x))))
+
         :else (handle-atom x)))
 
 (def ast
@@ -81,13 +114,14 @@
 (defn make-fn-params [args]
   # At this point they are already 'callable' similar to a(b,c)
   # We want to make them a,b,c
-  (def params (if (string/find "(" (get args 0))
+  (def params (if (string/find "tuple(" (get args 0))
                 (get args 0)
                 (get args 1)))
+  #(def params (get args 0))
   (->> params
-       (string/replace-all "(" ",")
+       (string/replace-all "tuple(" "")
        # FIXME: Incredibly hackish - related to [] -> (tuple)
-       (string/replace-all "tuple," "")
+       #(string/replace-all "tuple," "")
        (string/replace-all ")" "")))
 
 (defn make-fn-body [inargs]
@@ -184,6 +218,7 @@
 #(ast->js (walk-form '(defn ping [] (pp "pong"))))
 
 #(ast->js (walk-form '(do (def x 3) (def y 4) (defn sum [] (+ x y)) (pp 5 (sum)))))
+#(ast->js (walk-form '(do {:a 1 :b 2})))
 
 (defn make-js-old []
   (def prelude (slurp "prelude.js"))
@@ -236,13 +271,13 @@
        # Ensure shorthand for struct is good
        # TODO: We also will need similar for destruct I guess, if its
        # in a let binding (let will be done later, seems tricky)
-       (string/replace-all "@{" "(table ")
-       (string/replace-all "{" "(struct ")
-       (string/replace-all "}" ")")
-       # Ensure we do similar for shorthand
-       (string/replace-all "@[" "(array ")
-       (string/replace-all "[" "(tuple ")
-       (string/replace-all "]" ")")
+       # (string/replace-all "@{" "(table ")
+       # (string/replace-all "{" "(struct ")
+       # (string/replace-all "}" ")")
+       # # Ensure we do similar for shorthand
+       # (string/replace-all "@[" "(array ")
+       # (string/replace-all "[" "(tuple ")
+       # (string/replace-all "]" ")")
        ))
 
 (defn parse-file [s]
