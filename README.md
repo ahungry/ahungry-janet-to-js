@@ -6,6 +6,16 @@ Find out more about Janet at https://janet-lang.org
 
 *ALPHA QUALITY* (if that)
 
+# Design Note
+
+Consider this "not designed". I'll hack things on as I need them in
+the way I see fit.  It won't be quite JS or quite Janet (more like a
+subset of Janet with a sprinkling of JS).
+
+For a more thought out project, perhaps check out:
+
+https://github.com/staab/janet-js
+
 # Notable TODO
 
 - Support shorthand for struct/table/tuple/array syntax
